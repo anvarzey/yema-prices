@@ -1,6 +1,6 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
 
-(async () => {
+const argentinaEnCasa = async () => {
   const URL = 'https://www.argentinaencasa.com/18-yerba-mate'
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -16,13 +16,18 @@ const puppeteer = require('puppeteer');
       const outOfStock = regexToAvailability.test(card.children[2].firstElementChild.textContent.trim())
 
       return {
-        name,
-        price,
+        kgPrice: 'none',
         link,
-        outOfStock
+        name,
+        offerPrice: 'none',
+        outOfStock,
+        price,
+        wholesalePrice: false
       }
     })
   })
 
-  await console.log(arr)
-})()
+  return arr
+}
+
+module.exports = argentinaEnCasa

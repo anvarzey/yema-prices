@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
 
-(async () => {
-  const URL = 'https://www.uruguayeces.com/en/search?controller=search&s=canarias'
+const uruguayeces = async () => {
+  const URL = 'https://www.uruguayeces.com/en/5-yerba-mate'
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.goto(URL)
@@ -10,17 +10,25 @@ const puppeteer = require('puppeteer');
     return cards.map(card => {
       const link = card.firstElementChild.href
       const name = card.children[1].firstElementChild.textContent
-      const price = card.children[1].querySelector('.price').textContent
+      const oldPrice = card.children[1].children[1].querySelector('.regular-price')
+      const finalPrice = card.children[1].children[1].querySelector('span[itemprop = "price"]').textContent
+      const offerPrice = oldPrice ? finalPrice : 'none'
+      const price = oldPrice ? oldPrice.textContent : finalPrice
       const outOfStock = !card.children[1].querySelector('.addToCartForm')
 
       return {
+        kgPrice: 'none',
+        link,
         name,
-        price,
+        offerPrice,
         outOfStock,
-        link
+        price,
+        wholesalePrice: false
       }
     })
   })
 
-  await console.log(arr)
-})()
+  return arr
+}
+
+module.exports = uruguayeces

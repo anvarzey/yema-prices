@@ -1,32 +1,55 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer')
 
-(async () => {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await page.goto('https://www.matemundo.es/search.php?text=canarias')
-
-  const arr = await page.$$eval('#search div.product', cards => {
+const scrapFunction = async (page) => {
+  return await page.$$eval('#search div.product', cards => {
     return cards.map(el => {
-      const nameContainer = el.children[1]
+      const nameContainer = el.children[1].firstElementChild
       const prices = el.children[2]
       const hasOffer = prices.children.length > 2
+      const offerPrice = hasOffer ? prices.querySelector('strong.price')?.textContent : 'none'
+      const price = !hasOffer ? 'none' : prices.querySelector('strong.price')?.textContent
 
-      if (hasOffer) {
-        return {
-          name: nameContainer.textContent,
-          link: nameContainer.href,
-          offerPrice: prices.querySelector('strong.price').textContent,
-          kgPrice: prices.querySelector('.price.--convert').textContent
-        }
-      }
       return {
-        name: nameContainer.textContent,
+        kgPrice: prices.querySelector('.price.--convert')?.textContent,
         link: nameContainer.href,
-        price: prices.querySelector('strong.price').textContent,
-        kgPrice: prices.querySelector('.price.--convert').textContent
+        name: nameContainer?.textContent,
+        offerPrice,
+        outOfStock: false,
+        price,
+        wholesalePrice: false
       }
     })
   })
+}
 
-  await console.log(arr)
-})()
+const matemundo = async () => {
+  // const browser = await puppeteer.launch({ headless: false })
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+
+  const arr = []
+  let pageNum = 0
+  const argURL = 'https://www.matemundo.es/spa_m_Yerba-Mate_Yerba-Mate-por-pais-de-origen_Yerba-Mate-Argentina-3268.html'
+  const urURL = 'https://www.matemundo.es/spa_m_Yerba-Mate_Yerba-Mate-por-pais-de-origen_Yerba-Mate-Uruguaya-3270.html'
+  let actualURL = argURL
+  do {
+    await page.goto(actualURL + '?counter=' + pageNum)
+    const notFound = Boolean(await page.$('#return_sub_404'))
+    if (notFound) {
+      if (actualURL === urURL) {
+        pageNum = 404
+      } else {
+        actualURL = urURL
+        pageNum = 0
+      }
+    } else {
+      const data = await scrapFunction(page)
+      await arr.push(...data)
+      pageNum++
+    }
+  } while (pageNum < 404)
+
+  return arr
+}
+
+module.exports = matemundo
