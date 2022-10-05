@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer')
 
-const argentinaEnCasa = async () => {
+const argEnCasa = async () => {
   const URL = 'https://www.argentinaencasa.com/18-yerba-mate'
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
@@ -30,4 +30,4 @@ const argentinaEnCasa = async () => {
   return arr
 }
 
-module.exports = argentinaEnCasa
+module.exports = argEnCasa

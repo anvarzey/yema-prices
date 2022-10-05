@@ -1,4 +1,4 @@
-const argentinaEnCasa = require('./methods/argentinaEnCasa')
+const argEnCasa = require('./methods/argEnCasa')
 const deliArg = require('./methods/deliArg')
 const delicatino = require('./methods/delicatino')
 const gustoArg = require('./methods/gustoArg')
@@ -19,8 +19,8 @@ const workSheetColumnName = [
 
 const methods = [
   {
-    name: 'argentinaEnCasa',
-    method: argentinaEnCasa
+    name: 'argEnCasa',
+    method: argEnCasa
   },
   {
     name: 'deliArg',
