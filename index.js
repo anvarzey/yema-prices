@@ -1,4 +1,5 @@
 const argEnCasa = require('./methods/argEnCasa')
+const argentinisimo = require('./methods/argentinisimo')
 const deliArg = require('./methods/deliArg')
 const delicatino = require('./methods/delicatino')
 const gustoArg = require('./methods/gustoArg')
@@ -17,10 +18,14 @@ const workSheetColumnName = [
   'wholesalePrice'
 ]
 
-const methods = [
+const methodsArray = [
   {
     name: 'argEnCasa',
     method: argEnCasa
+  },
+  {
+    name: 'argentinisimo',
+    method: argentinisimo
   },
   {
     name: 'deliArg',
@@ -48,7 +53,7 @@ const methods = [
   }
 ]
 
-for (const method of methods) {
+for (const method of methodsArray) {
   const workSheetName = method.name
   const filePath = './files/' + workSheetName + '.xlsx'
   method.method().then(res => exportDataToExcel(res, workSheetColumnName, workSheetName, filePath))
